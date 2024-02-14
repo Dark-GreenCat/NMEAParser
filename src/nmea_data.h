@@ -7,7 +7,7 @@ typedef enum {
     NMEA_SENTENCE_RMC,
     NMEA_SENTENCE_GGA,
     NMEA_SENTENCE_OTHER
-} NMEA_Sentence_Type;
+} nmea_sentence_type;
 
 typedef struct {
     char time_raw[11];
@@ -53,17 +53,17 @@ typedef struct {
     nmea_altitude Altitude;
 } nmea_data;
 
-bool NMEA_Process(char c);
+bool NMEA_Parser_Process(char c);
 
-const char* getTime(void);
-const char* getDate(void);
-const char* getLatitude(void);
-char getLatitudeCardinal(void);
-const char* getLongitude(void);
-char getLongitudeCardinal(void);
-const char* getSpeed(void);
-const char* getCourse(void);
-const char* getHDOP(void);
-const char* getAltitude(void);
+const char* NMEA_Parser_getTime(void);
+const char* NMEA_Parser_getDate(void);
+const char* NMEA_Parser_getLatitude(void);
+char NMEA_Parser_getLatitudeCardinal(void);
+const char* NMEA_Parser_getLongitude(void);
+char NMEA_Parser_getLongitudeCardinal(void);
+const char* NMEA_Parser_getSpeed(void);
+const char* NMEA_Parser_getCourse(void);
+const char* NMEA_Parser_getHDOP(void);
+const char* NMEA_Parser_getAltitude(void);
 
 #endif /* RAW_H */

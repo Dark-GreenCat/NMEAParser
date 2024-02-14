@@ -8,7 +8,7 @@
 #include "nmea_common.h"
 
 char Term[15];
-NMEA_Sentence_Type Type = NMEA_SENTENCE_OTHER;
+nmea_sentence_type Type = NMEA_SENTENCE_OTHER;
 static uint8_t curTermNumber = 0, curTermOffset = 0;
 static bool isNMEASentence = false;
 static bool isChecksumTerm = false;
@@ -49,7 +49,7 @@ static bool endTermHandler() {
     return false;
 }
 
-bool NMEA_Process(char c) {
+bool NMEA_Parser_Process(char c) {
     if (c == '$') isNMEASentence = true;
     if (!isNMEASentence) return false;
     if (c == '\r' || c == '\n') isNMEASentence = false;
@@ -86,14 +86,13 @@ bool NMEA_Process(char c) {
     return false;
 }
 
-const char* getTime() { return NMEA_Data.Time.time_raw; }
-
-const char* getDate() { return NMEA_Data.Date.date_raw; }
-const char* getLatitude() { return NMEA_Data.Location.latitude_raw.location; }
-char getLatitudeCardinal() { return NMEA_Data.Location.latitude_raw.cardinal; }
-const char* getLongitude() { return NMEA_Data.Location.longitude_raw.location; }
-char getLongitudeCardinal() { return NMEA_Data.Location.longitude_raw.cardinal; }
-const char* getSpeed() { return NMEA_Data.Speed.speed_raw; }
-const char* getCourse() { return NMEA_Data.Course.course_raw; }
-const char* getHDOP() { return NMEA_Data.HDOP.hdop_raw; }
-const char* getAltitude() { return NMEA_Data.Altitude.altitude_raw; }
+const char* NMEA_Parser_getTime() { return NMEA_Data.Time.time_raw; }
+const char* NMEA_Parser_getDate() { return NMEA_Data.Date.date_raw; }
+const char* NMEA_Parser_getLatitude() { return NMEA_Data.Location.latitude_raw.location; }
+char NMEA_Parser_getLatitudeCardinal() { return NMEA_Data.Location.latitude_raw.cardinal; }
+const char* NMEA_Parser_getLongitude() { return NMEA_Data.Location.longitude_raw.location; }
+char NMEA_Parser_getLongitudeCardinal() { return NMEA_Data.Location.longitude_raw.cardinal; }
+const char* NMEA_Parser_getSpeed() { return NMEA_Data.Speed.speed_raw; }
+const char* NMEA_Parser_getCourse() { return NMEA_Data.Course.course_raw; }
+const char* NMEA_Parser_getHDOP() { return NMEA_Data.HDOP.hdop_raw; }
+const char* NMEA_Parser_getAltitude() { return NMEA_Data.Altitude.altitude_raw; }
