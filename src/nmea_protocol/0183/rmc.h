@@ -1,19 +1,19 @@
-#ifndef RMC_H
-#define RMC_H
+#ifndef __RMC_H
+#define __RMC_H
 
 #include <stdint.h>
 #include "../../nmea_data.h"
 #include "../../nmea_common.h"
 
-#define RMC_FIELD_TIME 1
-#define RMC_FIELD_DATA_VALID 2
-#define RMC_FIELD_LATITUDE 3
-#define RMC_FIELD_LATITUDE_CARDINAL 4
-#define RMC_FIELD_LONGITUDE 5
-#define RMC_FIELD_LONGITUDE_CARDINAL 6
-#define RMC_FIELD_SPEED 7
-#define RMC_FIELD_COURSE 8
-#define RMC_FIELD_DATE 9
+#define RMC_FIELD_TIME                  1
+#define RMC_FIELD_DATA_VALID            2  
+#define RMC_FIELD_LATITUDE              3
+#define RMC_FIELD_LATITUDE_CARDINAL     4
+#define RMC_FIELD_LONGITUDE             5
+#define RMC_FIELD_LONGITUDE_CARDINAL    6
+#define RMC_FIELD_SPEED                 7
+#define RMC_FIELD_COURSE                8
+#define RMC_FIELD_DATE                  9
 
 static inline void saveFieldNMEA_RMC(uint8_t field_index) {
     switch (field_index) {
@@ -58,4 +58,4 @@ static inline void saveFieldNMEA_RMC(uint8_t field_index) {
     }
 }
 
-#endif /* RMC_H */
+#endif /* __RMC_H */

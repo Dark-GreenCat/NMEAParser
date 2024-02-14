@@ -1,12 +1,13 @@
-#ifndef NMEA_COMMON_H
-#define NMEA_COMMON_H
+#ifndef __NMEA_COMMON_H
+#define __NMEA_COMMON_H
 
 #include <string.h>
 #include "nmea_data.h"
 
-#define NMEA_FIELD_MESSAGE_ID   0
+#define NMEA_MAX_FIELD_SIZE         15
+#define NMEA_FIELD_MESSAGE_ID       0
 
-extern char Term[15];
+extern char Term[NMEA_MAX_FIELD_SIZE];
 extern nmea_data NMEA_Data;
 extern bool isFix;
 
@@ -42,4 +43,4 @@ void setAltitude(nmea_altitude* altitude, char* term) {
     strcpy(altitude->altitude_raw, term);
 }
 
-#endif /* NMEA_COMMON_H */
+#endif /* __NMEA_COMMON_H */

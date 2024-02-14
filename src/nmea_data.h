@@ -1,7 +1,15 @@
-#ifndef RAW_H
-#define RAW_H
+#ifndef __NMEA_DATA_H
+#define __NMEA_DATA_H
 
 #include <stdbool.h>
+
+#define NMEA_TIME_FIELD_SIZE            11
+#define NMEA_DATE_FIELD_SIZE            7
+#define NMEA_LOCATION_FIELD_SIZE        13
+#define NMEA_SPEED_FIELD_SIZE           5
+#define NMEA_COURSE_FIELD_SIZE          7
+#define NMEA_HDOP_FIELD_SIZE            5
+#define NMEA_ALTITUDE_FIELD_SIZE        6
 
 typedef enum {
     NMEA_SENTENCE_RMC,
@@ -10,15 +18,15 @@ typedef enum {
 } nmea_sentence_type;
 
 typedef struct {
-    char time_raw[11];
+    char time_raw[NMEA_TIME_FIELD_SIZE];
 } nmea_time;
 
 typedef struct {
-    char date_raw[7];
+    char date_raw[NMEA_DATE_FIELD_SIZE];
 } nmea_date;
 
 typedef struct {
-    char location[13];
+    char location[NMEA_LOCATION_FIELD_SIZE];
     char cardinal;
 } nmea_location_raw;
 
@@ -28,19 +36,19 @@ typedef struct {
 } nmea_location;
 
 typedef struct {
-    char speed_raw[5];
+    char speed_raw[NMEA_SPEED_FIELD_SIZE];
 } nmea_speed;
 
 typedef struct {
-    char course_raw[7];
+    char course_raw[NMEA_COURSE_FIELD_SIZE];
 } nmea_course;
 
 typedef struct {
-    char hdop_raw[5];
+    char hdop_raw[NMEA_HDOP_FIELD_SIZE];
 } nmea_hdop;
 
 typedef struct {
-    char altitude_raw[6];
+    char altitude_raw[NMEA_ALTITUDE_FIELD_SIZE];
 } nmea_altitude;
 
 typedef struct {
@@ -66,4 +74,4 @@ const char* NMEA_Parser_getCourse(void);
 const char* NMEA_Parser_getHDOP(void);
 const char* NMEA_Parser_getAltitude(void);
 
-#endif /* RAW_H */
+#endif /* __NMEA_DATA_H */

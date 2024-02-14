@@ -7,7 +7,7 @@
 #include "nmea_protocol/0183/rmc.h"
 #include "nmea_common.h"
 
-char Term[15];
+char Term[NMEA_MAX_FIELD_SIZE];
 nmea_sentence_type Type = NMEA_SENTENCE_OTHER;
 static uint8_t curTermNumber = 0, curTermOffset = 0;
 static bool isNMEASentence = false;
