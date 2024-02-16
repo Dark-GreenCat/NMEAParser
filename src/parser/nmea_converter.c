@@ -1,6 +1,7 @@
-#include <stdio.h>
+#include "nmea_converter.h"
+
 #include <string.h>
-#include "nmea_common.h"
+#include <stdio.h>
 
 char* NMEA_Parser_getSubstring(char* destination, const char* source, uint32_t start_index, uint32_t size) {
     strncpy(destination, source + start_index, size);
@@ -89,36 +90,4 @@ char* NMEA_Parser_numtostr(int number, int decimal_places, char* result) {
 
 char* NMEA_Parser_nmeafloattostr(nmea_float number, char* result) {
     return NMEA_Parser_numtostr(number.value, number.decimal_places, result);
-}
-
-void setTime(nmea_time* time, char* term) {
-    strcpy(time->time_raw, term);
-}
-
-void setDate(nmea_date* date, char* term) {
-    strcpy(date->date_raw, term);
-}
-
-void setLocation(nmea_location_raw* location_raw, char* term) {
-    strcpy(location_raw->location, term);
-}
-
-void setCardinal(nmea_location_raw* location_raw, char* term) {
-    location_raw->cardinal = *term;
-}
-
-void setSpeed(nmea_speed* speed, char* term) {
-    strcpy(speed->speed_raw, term);
-}
-
-void setCourse(nmea_course* course, char* term) {
-    strcpy(course->course_raw, term);
-}
-
-void setHDOP(nmea_hdop* hdop, char* term) {
-    strcpy(hdop->hdop_raw, term);
-}
-
-void setAltitude(nmea_altitude* altitude, char* term) {
-    strcpy(altitude->altitude_raw, term);
 }

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nmea_parser.h"
-#include "src/nmea_decode.h"
 
 void main_test() {
     // char sentence[] = "$GPRMC,123519,A,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A";
@@ -35,28 +34,6 @@ void main_test() {
             printf("\n");
         }
     }
-}
-
-int powerOfTen(int exponent) {
-    int result = 1;
-    for (int i = 0; i < exponent; ++i) {
-        result *= 10;
-    }
-    return result;
-}
-
-void convertToFormattedString(int number, int decimal_places, char* result) {
-    int sign = (number < 0) ? -1 : 1;
-    number = (number < 0) ? -number : number;
-
-    int divisor = 1;
-    for (int i = 0; i < decimal_places; ++i) {
-        divisor *= 10;
-    }
-    int integer_part = number / divisor;
-    int fractional_part = number % divisor;
-
-    sprintf(result, "%s%d.%0*d", (sign < 0) ? "-" : "", integer_part, decimal_places, fractional_part);
 }
 
 void test() {

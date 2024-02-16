@@ -1,6 +1,6 @@
 #include <math.h>
-#include <stdlib.h>
-#include "nmea_decode.h"
+#include "nmea_decoder.h"
+#include "nmea_converter.h"
 
 void decodeTime(nmea_time* time) {
     const char* raw = time->time_raw;

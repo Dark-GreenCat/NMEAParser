@@ -4,13 +4,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define NMEA_MAX_FIELD_SIZE             15
+
 #define NMEA_TIME_FIELD_SIZE            11
 #define NMEA_DATE_FIELD_SIZE            7
 #define NMEA_LOCATION_FIELD_SIZE        13
-#define NMEA_SPEED_FIELD_SIZE           5
-#define NMEA_COURSE_FIELD_SIZE          7
-#define NMEA_HDOP_FIELD_SIZE            5
-#define NMEA_ALTITUDE_FIELD_SIZE        6
+#define NMEA_SPEED_FIELD_SIZE           NMEA_MAX_FIELD_SIZE
+#define NMEA_COURSE_FIELD_SIZE          NMEA_MAX_FIELD_SIZE
+#define NMEA_HDOP_FIELD_SIZE            NMEA_MAX_FIELD_SIZE
+#define NMEA_ALTITUDE_FIELD_SIZE        NMEA_MAX_FIELD_SIZE
 
 typedef enum {
     NMEA_SENTENCE_RMC,
@@ -85,17 +87,13 @@ typedef struct {
     nmea_altitude Altitude;
 } nmea_data;
 
-bool NMEA_Parser_Process(char c);
-
-const char* NMEA_Parser_getTime(void);
-const char* NMEA_Parser_getDate(void);
-const char* NMEA_Parser_getLatitude(void);
-char NMEA_Parser_getLatitudeCardinal(void);
-const char* NMEA_Parser_getLongitude(void);
-char NMEA_Parser_getLongitudeCardinal(void);
-const char* NMEA_Parser_getSpeed(void);
-const char* NMEA_Parser_getCourse(void);
-const char* NMEA_Parser_getHDOP(void);
-const char* NMEA_Parser_getAltitude(void);
+void setRawTime(nmea_time* time, char* term);
+void setRawDate(nmea_date* date, char* term);
+void setRawLocation(nmea_location_raw* location_raw, char* term);
+void setRawLocationCardinal(nmea_location_raw* location_raw, char* term);
+void setRawSpeed(nmea_speed* speed, char* term);
+void setRawCourse(nmea_course* course, char* term);
+void setRawHDOP(nmea_hdop* hdop, char* term);
+void setRawAltitude(nmea_altitude* altitude, char* term);
 
 #endif /* __NMEA_DATA_H */

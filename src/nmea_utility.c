@@ -2,10 +2,9 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "nmea_data.h"
+#include "nmea_utility.h"
 #include "nmea_protocol/0183/gga.h"
 #include "nmea_protocol/0183/rmc.h"
-#include "nmea_common.h"
 
 char Term[NMEA_MAX_FIELD_SIZE];
 nmea_sentence_type Type = NMEA_SENTENCE_OTHER;

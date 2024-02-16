@@ -1,16 +1,39 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -Isrc
+CC := gcc
+CFLAGS := -Wall -Wextra -g
+SRCDIR := src
+PARSERDIR := src/parser
+BUILDDIR := build
+SOURCES := $(wildcard $(SRCDIR)/*.c) $(wildcard $(PARSERDIR)/*.c)
+OBJECTS := $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(filter $(SRCDIR)/%, $(SOURCES))) \
+           $(patsubst $(PARSERDIR)/%.c, $(BUILDDIR)/parser/%.o, $(filter $(PARSERDIR)/%, $(SOURCES)))
+TARGET := example
 
-# List all source files
-SRCS = example.c $(wildcard src/*.c)
+.PHONY: all clean run
 
-# Name of the executable
-TARGET = example
+build: $(BUILDDIR)/$(TARGET)
 
-all: $(TARGET)
+$(BUILDDIR)/$(TARGET): $(OBJECTS) $(BUILDDIR)/$(TARGET).o
+	$(CC) $(CFLAGS) $^ -o $@
 
-$(TARGET): $(SRCS)
-	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILDDIR)/parser/%.o: $(PARSERDIR)/%.c
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILDDIR)/$(TARGET).o: $(TARGET).c
+	@mkdir -p "$(dir $@)"
+	$(CC) $(CFLAGS) -c $< -o $@ 
+
+run: $(BUILDDIR)/$(TARGET)
+	@echo ""
+	@echo "### Running program ###"
+	@echo "-----------------------"
+	@$(BUILDDIR)/$(TARGET)
 
 clean:
-	rm -f $(TARGET)
+	rm -rf "$(BUILDDIR)"
+
+.PHONY: clean

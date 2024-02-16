@@ -1,8 +1,8 @@
-#ifndef __NMEA_DECODE_H
-#define __NMEA_DECODE_H
+#ifndef __NMEA_DECODER_H
+#define __NMEA_DECODER_H
 
 #include <stdbool.h>
-#include "nmea_common.h"
+#include "nmea_data.h"
 
 void decodeTime(nmea_time* time);
 void decodeDate(nmea_date* date);

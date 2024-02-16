@@ -2,7 +2,6 @@
 #define __RMC_H
 
 #include <stdint.h>
-#include "../../nmea_data.h"
 #include "../../nmea_common.h"
 
 #define RMC_FIELD_TIME                  1
@@ -18,7 +17,7 @@
 static inline void saveFieldNMEA_RMC(uint8_t field_index) {
     switch (field_index) {
         case RMC_FIELD_TIME:
-            setTime(&NMEA_Data.Time, Term);
+            setRawTime(&NMEA_Data.Time, Term);
             break;
         
         case RMC_FIELD_DATA_VALID:
@@ -26,31 +25,31 @@ static inline void saveFieldNMEA_RMC(uint8_t field_index) {
             break;
 
         case RMC_FIELD_LATITUDE:
-            setLocation(&NMEA_Data.Location.latitude_raw, Term);
+            setRawLocation(&NMEA_Data.Location.latitude_raw, Term);
             break;
 
         case RMC_FIELD_LATITUDE_CARDINAL:
-            setCardinal(&NMEA_Data.Location.latitude_raw, Term);
+            setRawLocationCardinal(&NMEA_Data.Location.latitude_raw, Term);
             break;
 
         case RMC_FIELD_LONGITUDE:
-            setLocation(&NMEA_Data.Location.longitude_raw, Term);
+            setRawLocation(&NMEA_Data.Location.longitude_raw, Term);
             break;
 
         case RMC_FIELD_LONGITUDE_CARDINAL:
-            setCardinal(&NMEA_Data.Location.longitude_raw, Term);
+            setRawLocationCardinal(&NMEA_Data.Location.longitude_raw, Term);
             break;
 
         case RMC_FIELD_SPEED:
-            setSpeed(&NMEA_Data.Speed, Term);
+            setRawSpeed(&NMEA_Data.Speed, Term);
             break;
 
         case RMC_FIELD_COURSE:
-            setCourse(&NMEA_Data.Course, Term);
+            setRawCourse(&NMEA_Data.Course, Term);
             break;
 
         case RMC_FIELD_DATE:
-            setDate(&NMEA_Data.Date, Term);
+            setRawDate(&NMEA_Data.Date, Term);
             break;
 
         default:
