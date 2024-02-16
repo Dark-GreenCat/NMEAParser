@@ -4,7 +4,7 @@ The NMEA Parser is a library for parsing NMEA sentences and extracting the data 
 
 ## Getting Started
 
-To use the NMEA Parser, simply include the `nmea_parser.h` header file in your source code and build with the `src/nmea_data.c` file.
+To use the NMEA Parser, include the `nmea_parser.h` header file in your source code and build with all the `src/*.c` and `src/core/*.c` files.
 
 ## Features
 
@@ -31,23 +31,37 @@ To use the NMEA Parser, follow these steps:
 ```
 char* sentence_rmc = "+QGNSSRD: $GNRMC,100234.000,A,2102.5194,N,10547.2117,E,0.66,166.83,061223,,,A*70\r\n";
 
+nmea_data GPSData = { 0 };
+char temp[15];
 for (int i = 0; sentence_rmc[i] != '\0'; i++) {
-    if (NMEA_Parser_Process(sentence_rmc[i])) {
-        printf("Time: %s\n", getTime());
-        printf("Date: %s\n", getDate());
-        printf("Latitude: %s %c\n", getLatitude(), getLatitudeCardinal());
-        printf("Longitude: %s %c\n", getLongitude(), getLongitudeCardinal());
-        printf("Speed: %s\n", getSpeed());
-        printf("Course: %s\n", getCourse());
-        printf("HDOP: %s\n", getHDOP());
-        printf("Altitude: %s\n", getAltitude());
+    if (NMEA_Parser_Process(&GPSData, sentence_rmc[i])) {
+        printf("\n----- CAPTURING RMC DATA -----\n");
+        printf("Time: %02d:%02d:%02d\n", GPSData.Time.hours, GPSData.Time.minutes, GPSData.Time.seconds);
+        printf("Date: %02d/%02d/%04d\n", GPSData.Date.day, GPSData.Date.month, 2000 + GPSData.Date.year);
+        printf("Latitude: %s\n", NMEA_Parser_nmeafloattostr(GPSData.Location.latitude, temp));
+        printf("Longitude: %s\n", NMEA_Parser_nmeafloattostr(GPSData.Location.longitude, temp));
+        printf("Speed: %s knots\n", NMEA_Parser_nmeafloattostr(GPSData.Speed.speed_knot, temp));
+        printf("Course: %s degrees\n", NMEA_Parser_nmeafloattostr(GPSData.Course.course_degree, temp));
+        printf("HDOP: %s\n", NMEA_Parser_nmeafloattostr(GPSData.HDOP.hdop, temp));
+        printf("Altitude: %sm\n", NMEA_Parser_nmeafloattostr(GPSData.Altitude.altitude_meter, temp));
         printf("\n");
     }
 }
 ```
-3. Build your application with the `src/nmea_data.c` file:
+3. Build and run your application with the `make clean build run`, or build your application with all the `src/*.c` and `src/core/*.c` files:
 ```
-gcc -o my_app my_app.c src/nmea_data.c
+make clean build run
+```
+
+or
+
+```
+gcc -Wall -Wextra -g -c src/nmea_utility.c -o build/nmea_utility.o
+gcc -Wall -Wextra -g -c src/core/nmea_converter.c -o build/core/nmea_converter.o
+gcc -Wall -Wextra -g -c src/core/nmea_data.c -o build/core/nmea_data.o
+gcc -Wall -Wextra -g -c src/core/nmea_decoder.c -o build/core/nmea_decoder.o
+gcc -Wall -Wextra -g -c example.c -o build/example.o 
+gcc -Wall -Wextra -g build/nmea_utility.o build/core/nmea_converter.o build/core/nmea_data.o build/core/nmea_decoder.o build/example.o -o build/example
 ```
 ---
 
@@ -76,29 +90,33 @@ typedef struct {
     my_protocol_data device_id;
 } nmea_data;
 ```
-### 3. Defining Your Protocol's Function Pointer
+### 3. Defining Your Protocol's Function
 
-In order to handle your protocol's data fields, you'll need to define a new function pointer in `your_protocol.h`. This function pointer will be used to process the data extracted from the NMEA sentence.
+In order to handle your protocol's data fields, you'll need to define a new function in `your_protocol.h`. This function pointer will be used to process the data extracted from the NMEA sentence.
 
 #### Shared Variables
 
-You should be aware of the two shared variables in `nmea_common.h` that are used to store temporary values (Term) and parse results (NMEA_Data). These variables are used throughout the library to store and manipulate data.
+You should be aware of the two shared variables in `nmea_global.h` that are used to store temporary values (Term) and check valid results (isFix). These variables are used throughout the library to store preprocessing data.
 ```c
-#define NMEA_MAX_FIELD_SIZE     15
-
 extern char Term[NMEA_MAX_FIELD_SIZE];
-extern nmea_data NMEA_Data;
+extern bool isFix;
 ```
+Simply include `nmea_global.h` to `your_protocol.h`
 
-Here's an example of how you can define your protocol's function pointer:
+#### Defining Your Protocol's Function
+Here's an example of how you can define your protocol's function:
 ```c
+// Assuming that your_protocol.h directory is nmea_protocol/0183/your_protocol.h
+#include "../../nmea_global.h"
+
 #define YOUR_PROTOCOL_FIELD_INDEX   1
-static inline void saveFieldNMEA_YOUR_PROTOCOL(uint8_t field_index) {
+static inline void saveFieldNMEA_YOUR_PROTOCOL(nmea_data* data, uint8_t field_index) {
     // Handle your protocol's data fields
-    // You should read data from string Term[] and paste to variable NMEA_Data
+    // You should read data from string Term[] and paste to data
     switch (field_index) {
         case YOUR_PROTOCOL_FIELD_INDEX:
-            strcpy(NMEA_Data.device_id.device_id, Term);
+            strcpy(data->device_id.device_id, Term);
+            // Put your decoder here
             break;
 
         default:
@@ -106,12 +124,12 @@ static inline void saveFieldNMEA_YOUR_PROTOCOL(uint8_t field_index) {
     }
 }
 ```
-By following these steps, you'll be able to extend the NMEA Parser Library with your own protocol and handle the data fields specific to your protocol.
+
 ### 4. Modify the `endTermHandler()` Function
 
-In `nmea_data.c`, modify the `endTermHandler()` function to call your new protocol's function pointer. For example:
+In `nmea_ultility.c`, modify the `endTermHandler()` function to call your new protocol's function pointer. For example:
 ```c
-static bool endTermHandler() {
+static bool endTermHandler(nmea_data* data) {
     // Existing code...
 
     if (curTermNumber == NMEA_FIELD_MESSAGE_ID) {
@@ -123,38 +141,35 @@ static bool endTermHandler() {
         else if (strcmp(Term + 2, "xxx") == 0) Type = NMEA_SENTENCE_YOUR_PROTOCOL;
     }
 
-    if (Type == NMEA_SENTENCE_RMC) saveFieldNMEA_RMC(curTermNumber);
-    if (Type == NMEA_SENTENCE_GGA) saveFieldNMEA_GGA(curTermNumber);
+    if (Type == NMEA_SENTENCE_RMC) saveFieldNMEA_RMC(data, curTermNumber);
+    if (Type == NMEA_SENTENCE_GGA) saveFieldNMEA_GGA(data, curTermNumber);
     
     // Add a new case for your protocol
-    if (Type == NMEA_SENTENCE_YOUR_PROTOCOL) saveFieldNMEA_YOUR_PROTOCOL(curTermNumber);
+    if (Type == NMEA_SENTENCE_YOUR_PROTOCOL) saveFieldNMEA_YOUR_PROTOCOL(data, curTermNumber);
 }
 ```
-Sure, here are the revised steps in markdown format:
 
 ### 5. Adding Custom Functionality
 
-In addition to the existing functionality provided by the NMEA Parser Library, you may wish to add your own custom functions to handle specific requirements or use cases. To do this, you can freely add your own function prototypes and definitions in the `nmea_data.h` and `nmea_data.c` files.
+In addition to the existing functionality provided by the NMEA Parser Library, you may wish to add your own custom functions to handle specific requirements or use cases. To do this, you can freely add your own function prototypes and definitions in the `core` directory.
 
-When adding custom functionality, it's important to keep in mind that the library uses shared variables to save data, which are declared in `nmea_common.h`. You can access and modify these shared variables in any source file that includes them, but it's generally recommended to limit the scope of your custom functions to `nmea_data.c` only.
+When adding custom functionality, it's important to keep in mind that the library uses shared variables to save temporary data, which are declared in `nmea_global.h`. You can access and modify these shared variables in any source file that includes them, but it's generally recommended to limit the scope of your custom functions to `nmea_ultility.c` only.
 
 Here's an example of how you can add your own function:
 ```c
-// In nmea_data.h
-void my_own_function(void);
+// In nmea_your_code.h
+void your_own_function(void);
 
-// In nmea_data.c
-void my_own_function(void) {
+// In nmea_your_code.c
+void your_own_function(void) {
     // Function implementation goes here
 }
 ```
 
-If you intend for your functions to be accessible throughout the library, simply include them in the `nmea_common.h` header file
+If you intend for your functions to be accessible throughout the library, simply include them in the `nmea_core.h` header file
 ```c
-// In nmea_common.h
-void my_own_function(void) {
-    // Function implementation goes here
-}
+// In nmea_core.h
+#include "core/nmea_your_code.h"
 ```
 By following these steps, you can extend the NMEA Parser Library with your own custom functionality, while still maintaining the integrity and consistency of the existing codebase.
 

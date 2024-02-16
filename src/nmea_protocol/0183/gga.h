@@ -2,7 +2,8 @@
 #define __GGA_H
 
 #include <stdint.h>
-#include "../../nmea_common.h"
+#include "../../nmea_global.h"
+#include "../../nmea_core.h"
 
 #define GGA_FIELD_TIME                  1
 #define GGA_FIELD_LATITUDE              2
@@ -13,26 +14,28 @@
 #define GGA_FIELD_HDOP                  8
 #define GGA_FIELD_ALTITUDE              9
 
-static inline void saveFieldNMEA_GGA(uint8_t field_index) {
+static inline void saveFieldNMEA_GGA(nmea_data* data, uint8_t field_index) {
     switch (field_index) {
         case GGA_FIELD_TIME:
-            setRawTime(&NMEA_Data.Time, Term);
+            setRawTime(&data->Time, Term);
+            decodeTime(&data->Time);
             break;
 
         case GGA_FIELD_LATITUDE:
-            setRawLocation(&NMEA_Data.Location.latitude_raw, Term);
+            setRawLocation(&data->Location.latitude_raw, Term);
             break;
 
         case GGA_FIELD_LATITUDE_CARDINAL:
-            setRawLocationCardinal(&NMEA_Data.Location.latitude_raw, Term);
+            setRawLocationCardinal(&data->Location.latitude_raw, Term);
             break;
 
         case GGA_FIELD_LONGITUDE:
-            setRawLocation(&NMEA_Data.Location.longitude_raw, Term);
+            setRawLocation(&data->Location.longitude_raw, Term);
             break;
 
         case GGA_FIELD_LONGITUDE_CARDINAL:
-            setRawLocationCardinal(&NMEA_Data.Location.longitude_raw, Term);
+            setRawLocationCardinal(&data->Location.longitude_raw, Term);
+            decodeLocation(&data->Location);
             break;
         
         case GGA_FIELD_FIX_STATUS:
@@ -40,11 +43,13 @@ static inline void saveFieldNMEA_GGA(uint8_t field_index) {
             break;
 
         case GGA_FIELD_HDOP:
-            setRawHDOP(&NMEA_Data.HDOP, Term);
+            setRawHDOP(&data->HDOP, Term);
+            decodeHDOP(&data->HDOP);
             break;
 
         case GGA_FIELD_ALTITUDE:
-            setRawAltitude(&NMEA_Data.Altitude, Term);
+            setRawAltitude(&data->Altitude, Term);
+            decodeAltitude(&data->Altitude);
             break;
 
         default:

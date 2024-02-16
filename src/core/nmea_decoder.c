@@ -8,7 +8,7 @@ void decodeTime(nmea_time* time) {
     time->hours = (uint8_t) NMEA_Parser_strntou32(raw, 0, 2);
     time->minutes = (uint8_t) NMEA_Parser_strntou32(raw, 2, 2);
     time->seconds = (uint8_t) NMEA_Parser_strntou32(raw, 4, 2);
-    time->miliseconds = (uint16_t) NMEA_Parser_strntou32(raw, 7, 3);
+    time->milliseconds = (uint16_t) NMEA_Parser_strntou32(raw, 7, 3);
 }
 
 void decodeDate(nmea_date* date) {

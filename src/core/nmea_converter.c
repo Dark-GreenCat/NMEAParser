@@ -66,7 +66,7 @@ uint32_t NMEA_Parser_strtou32(const char* str) {
     return result;
 }
 
-int32_t NMEA_Parser_strntou32(const char* str, uint32_t start_index, uint32_t size) {
+uint32_t NMEA_Parser_strntou32(const char* str, uint32_t start_index, uint32_t size) {
     char number[size + 1];
     NMEA_Parser_getSubstring(number, str, start_index, size);
     return NMEA_Parser_strtou32(number);
@@ -90,4 +90,13 @@ char* NMEA_Parser_numtostr(int number, int decimal_places, char* result) {
 
 char* NMEA_Parser_nmeafloattostr(nmea_float number, char* result) {
     return NMEA_Parser_numtostr(number.value, number.decimal_places, result);
+}
+
+double NMEA_Parser_nmeafloattod(nmea_float number) {
+    double result = (double) number.value;
+    for (uint8_t i = 0; i < number.decimal_places; i++) {
+        result /= 10.0f;
+    }
+
+    return result;
 }

@@ -2,7 +2,8 @@
 #define __RMC_H
 
 #include <stdint.h>
-#include "../../nmea_common.h"
+#include "../../nmea_global.h"
+#include "../../nmea_core.h"
 
 #define RMC_FIELD_TIME                  1
 #define RMC_FIELD_DATA_VALID            2  
@@ -14,10 +15,11 @@
 #define RMC_FIELD_COURSE                8
 #define RMC_FIELD_DATE                  9
 
-static inline void saveFieldNMEA_RMC(uint8_t field_index) {
+static inline void saveFieldNMEA_RMC(nmea_data* data, uint8_t field_index) {
     switch (field_index) {
         case RMC_FIELD_TIME:
-            setRawTime(&NMEA_Data.Time, Term);
+            setRawTime(&data->Time, Term);
+            decodeTime(&data->Time);
             break;
         
         case RMC_FIELD_DATA_VALID:
@@ -25,31 +27,35 @@ static inline void saveFieldNMEA_RMC(uint8_t field_index) {
             break;
 
         case RMC_FIELD_LATITUDE:
-            setRawLocation(&NMEA_Data.Location.latitude_raw, Term);
+            setRawLocation(&data->Location.latitude_raw, Term);
             break;
 
         case RMC_FIELD_LATITUDE_CARDINAL:
-            setRawLocationCardinal(&NMEA_Data.Location.latitude_raw, Term);
+            setRawLocationCardinal(&data->Location.latitude_raw, Term);
             break;
 
         case RMC_FIELD_LONGITUDE:
-            setRawLocation(&NMEA_Data.Location.longitude_raw, Term);
+            setRawLocation(&data->Location.longitude_raw, Term);
             break;
 
         case RMC_FIELD_LONGITUDE_CARDINAL:
-            setRawLocationCardinal(&NMEA_Data.Location.longitude_raw, Term);
+            setRawLocationCardinal(&data->Location.longitude_raw, Term);
+            decodeLocation(&data->Location);
             break;
 
         case RMC_FIELD_SPEED:
-            setRawSpeed(&NMEA_Data.Speed, Term);
+            setRawSpeed(&data->Speed, Term);
+            decodeSpeed(&data->Speed);
             break;
 
         case RMC_FIELD_COURSE:
-            setRawCourse(&NMEA_Data.Course, Term);
+            setRawCourse(&data->Course, Term);
+            decodeCourse(&data->Course);
             break;
 
         case RMC_FIELD_DATE:
-            setRawDate(&NMEA_Data.Date, Term);
+            setRawDate(&data->Date, Term);
+            decodeDate(&data->Date);
             break;
 
         default:

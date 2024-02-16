@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "nmea_utility.h"
+#include "nmea_global.h"
 #include "nmea_protocol/0183/gga.h"
 #include "nmea_protocol/0183/rmc.h"
 
@@ -13,7 +14,6 @@ static bool isNMEASentence = false;
 static bool isChecksumTerm = false;
 static uint8_t parity = 0;
 
-nmea_data NMEA_Data;
 bool isFix = false;
 
 static int8_t hex2dec(char hex) {
@@ -24,7 +24,7 @@ static int8_t hex2dec(char hex) {
     return -1;
 }
 
-static bool endTermHandler() {
+static bool endTermHandler(nmea_data* data) {
     if(isChecksumTerm) {
         isChecksumTerm = false;
 
@@ -42,13 +42,13 @@ static bool endTermHandler() {
         else if (strcmp(Term + 2, "GGA") == 0) Type = NMEA_SENTENCE_GGA;
     }
 
-    if (Type == NMEA_SENTENCE_RMC) saveFieldNMEA_RMC(curTermNumber);
-    if (Type == NMEA_SENTENCE_GGA) saveFieldNMEA_GGA(curTermNumber);
+    if (Type == NMEA_SENTENCE_RMC) saveFieldNMEA_RMC(data, curTermNumber);
+    if (Type == NMEA_SENTENCE_GGA) saveFieldNMEA_GGA(data, curTermNumber);
 
     return false;
 }
 
-bool NMEA_Parser_Process(char c) {
+bool NMEA_Parser_Process(nmea_data* data, char c) {
     if (c == '$') isNMEASentence = true;
     if (!isNMEASentence) return false;
     if (c == '\r' || c == '\n') isNMEASentence = false;
@@ -60,7 +60,7 @@ bool NMEA_Parser_Process(char c) {
         case '\r':
         case '\n':
             Term[curTermOffset] = '\0';
-            bool isValidSentence = endTermHandler();
+            bool isValidSentence = endTermHandler(data);
             curTermNumber++;
             curTermOffset = 0;
             isChecksumTerm = (c == '*');
@@ -85,13 +85,13 @@ bool NMEA_Parser_Process(char c) {
     return false;
 }
 
-const char* NMEA_Parser_getTime() { return NMEA_Data.Time.time_raw; }
-const char* NMEA_Parser_getDate() { return NMEA_Data.Date.date_raw; }
-const char* NMEA_Parser_getLatitude() { return NMEA_Data.Location.latitude_raw.location; }
-char NMEA_Parser_getLatitudeCardinal() { return NMEA_Data.Location.latitude_raw.cardinal; }
-const char* NMEA_Parser_getLongitude() { return NMEA_Data.Location.longitude_raw.location; }
-char NMEA_Parser_getLongitudeCardinal() { return NMEA_Data.Location.longitude_raw.cardinal; }
-const char* NMEA_Parser_getSpeed() { return NMEA_Data.Speed.speed_raw; }
-const char* NMEA_Parser_getCourse() { return NMEA_Data.Course.course_raw; }
-const char* NMEA_Parser_getHDOP() { return NMEA_Data.HDOP.hdop_raw; }
-const char* NMEA_Parser_getAltitude() { return NMEA_Data.Altitude.altitude_raw; }
+const char* NMEA_Parser_getRawTime(nmea_data* data) { return data->Time.time_raw; }
+const char* NMEA_Parser_getRawDate(nmea_data* data) { return data->Date.date_raw; }
+const char* NMEA_Parser_getRawLatitude(nmea_data* data) { return data->Location.latitude_raw.location; }
+char NMEA_Parser_getRawLatitudeCardinal(nmea_data* data) { return data->Location.latitude_raw.cardinal; }
+const char* NMEA_Parser_getRawLongitude(nmea_data* data) { return data->Location.longitude_raw.location; }
+char NMEA_Parser_getRawLongitudeCardinal(nmea_data* data) { return data->Location.longitude_raw.cardinal; }
+const char* NMEA_Parser_getRawSpeed(nmea_data* data) { return data->Speed.speed_raw; }
+const char* NMEA_Parser_getRawCourse(nmea_data* data) { return data->Course.course_raw; }
+const char* NMEA_Parser_getRawHDOP(nmea_data* data) { return data->HDOP.hdop_raw; }
+const char* NMEA_Parser_getRawAltitude(nmea_data* data) { return data->Altitude.altitude_raw; }

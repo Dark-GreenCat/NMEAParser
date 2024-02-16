@@ -1,14 +1,14 @@
 CC := gcc
 CFLAGS := -Wall -Wextra -g
 SRCDIR := src
-PARSERDIR := src/parser
+PARSERDIR := src/core
 BUILDDIR := build
 SOURCES := $(wildcard $(SRCDIR)/*.c) $(wildcard $(PARSERDIR)/*.c)
 OBJECTS := $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(filter $(SRCDIR)/%, $(SOURCES))) \
-           $(patsubst $(PARSERDIR)/%.c, $(BUILDDIR)/parser/%.o, $(filter $(PARSERDIR)/%, $(SOURCES)))
+           $(patsubst $(PARSERDIR)/%.c, $(BUILDDIR)/core/%.o, $(filter $(PARSERDIR)/%, $(SOURCES)))
 TARGET := example
 
-.PHONY: all clean run
+.PHONY: build clean run
 
 build: $(BUILDDIR)/$(TARGET)
 
@@ -36,4 +36,4 @@ run: $(BUILDDIR)/$(TARGET)
 clean:
 	rm -rf "$(BUILDDIR)"
 
-.PHONY: clean
+.PHONY: build clean run
