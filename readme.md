@@ -15,6 +15,14 @@ The NMEA Parser includes the following features:
 * Provides accurate results even in the presence of noise or invalid data
 * Easy to use and integrate into your application
 
+## Supported function
+
+List of supported functions can be found in:
+
+* `core/nmea_data.h`
+* `core/nmea_converter.h`
+* `core/nmea_decoder.h`
+
 ## Limitations
 
 The current version of the NMEA Parser only supports GGA and RMC sentence types. However, it can be easily extended to support other sentence types by adding additional parsing logic.
