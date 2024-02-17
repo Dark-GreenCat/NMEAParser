@@ -30,7 +30,7 @@ static bool endTermHandler(nmea_data* data) {
 
         uint8_t checksum = (uint8_t) (16 * hex2dec(Term[0]) + hex2dec(Term[1]));
         if(checksum == parity) {
-            return true;
+            return !(Type == NMEA_SENTENCE_OTHER);
         }
 
         return false;
@@ -40,6 +40,8 @@ static bool endTermHandler(nmea_data* data) {
         Type = NMEA_SENTENCE_OTHER;
         if      (strcmp(Term + 2, "RMC") == 0) Type = NMEA_SENTENCE_RMC;
         else if (strcmp(Term + 2, "GGA") == 0) Type = NMEA_SENTENCE_GGA;
+
+        if(Type == NMEA_SENTENCE_OTHER) return false;
     }
 
     if (Type == NMEA_SENTENCE_RMC) saveFieldNMEA_RMC(data, curTermNumber);
