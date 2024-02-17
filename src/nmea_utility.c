@@ -87,13 +87,30 @@ bool NMEA_Parser_Process(nmea_data* data, char c) {
     return false;
 }
 
-const char* NMEA_Parser_getRawTime(nmea_data* data) { return data->Time.time_raw; }
-const char* NMEA_Parser_getRawDate(nmea_data* data) { return data->Date.date_raw; }
-const char* NMEA_Parser_getRawLatitude(nmea_data* data) { return data->Location.latitude_raw.location; }
-char NMEA_Parser_getRawLatitudeCardinal(nmea_data* data) { return data->Location.latitude_raw.cardinal; }
-const char* NMEA_Parser_getRawLongitude(nmea_data* data) { return data->Location.longitude_raw.location; }
-char NMEA_Parser_getRawLongitudeCardinal(nmea_data* data) { return data->Location.longitude_raw.cardinal; }
-const char* NMEA_Parser_getRawSpeed(nmea_data* data) { return data->Speed.speed_raw; }
-const char* NMEA_Parser_getRawCourse(nmea_data* data) { return data->Course.course_raw; }
-const char* NMEA_Parser_getRawHDOP(nmea_data* data) { return data->HDOP.hdop_raw; }
-const char* NMEA_Parser_getRawAltitude(nmea_data* data) { return data->Altitude.altitude_raw; }
+void NMEA_Parser_nmeadata_to_tm(const nmea_data* data, struct tm* timeinfo) {
+    timeinfo->tm_sec = data->Time.seconds;
+    timeinfo->tm_min = data->Time.minutes;
+    timeinfo->tm_hour = data->Time.hours;
+    timeinfo->tm_mday = data->Date.day;
+    timeinfo->tm_mon = data->Date.month - 1;
+    timeinfo->tm_year = data->Date.year + 100;
+}
+
+void NMEA_Parser_tm_to_nmeadata(const struct tm* timeinfo, nmea_data* data) {
+    data->Time.seconds = timeinfo->tm_sec;
+    data->Time.minutes = timeinfo->tm_min;
+    data->Time.hours = timeinfo->tm_hour;
+    data->Date.day = timeinfo->tm_mday;
+    data->Date.month = timeinfo->tm_mon + 1;
+    data->Date.year = timeinfo->tm_year - 100;
+}
+
+void NMEA_Parser_changeTimezone(nmea_data* data, int timezone_offset) {
+    struct tm timeinfo;
+    NMEA_Parser_nmeadata_to_tm(data, &timeinfo);
+
+    timeinfo.tm_hour += timezone_offset;
+    mktime(&timeinfo);
+
+    NMEA_Parser_tm_to_nmeadata(&timeinfo, data);
+}

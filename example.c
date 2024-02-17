@@ -11,6 +11,8 @@ void test_parser() {
     char temp[15];
     for (int i = 0; sentence_rmc[i] != '\0'; i++) {
         if (NMEA_Parser_Process(&GPSData, sentence_rmc[i])) {
+            // GMT+7
+            NMEA_Parser_changeTimezone(&GPSData, 7);
             printf("\n----- CAPTURING RMC DATA -----\n");
             printf("Time: %02d:%02d:%02d\n", GPSData.Time.hours, GPSData.Time.minutes, GPSData.Time.seconds);
             printf("Date: %02d/%02d/%04d\n", GPSData.Date.day, GPSData.Date.month, 2000 + GPSData.Date.year);
@@ -26,6 +28,8 @@ void test_parser() {
 
     for (int i = 0; sentence_gga[i] != '\0'; i++) {
         if (NMEA_Parser_Process(&GPSData, sentence_gga[i])) {
+            // GMT+7
+            NMEA_Parser_changeTimezone(&GPSData, 7);
             printf("\n----- CAPTURING GGA DATA -----\n");
             printf("Time: %02d:%02d:%02d\n", GPSData.Time.hours, GPSData.Time.minutes, GPSData.Time.seconds);
             printf("Date: %02d/%02d/%04d\n", GPSData.Date.day, GPSData.Date.month, 2000 + GPSData.Date.year);

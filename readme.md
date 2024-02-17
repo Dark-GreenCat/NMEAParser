@@ -8,6 +8,11 @@ To use the NMEA Parser, include the `nmea_parser.h` header file in your source c
 
 ## Features
 
+New Features:
+
+- **Conversion between NMEA data and `struct tm`:** The NMEA Parser now includes the capability to convert NMEA data to the `struct tm` format provided by the `<time.h>` library. This allows for easier manipulation and usage of time-related data in your application.
+- **Support for changing time zone:** The NMEA Parser now provides support for changing the time zone. This means you can adjust the time zone of the parsed NMEA data according to your specific requirements, enhancing the flexibility and usability of the library.
+
 The NMEA Parser includes the following features:
 
 * Parses NMEA 0183 sentences and extracts the data they contain
@@ -15,13 +20,30 @@ The NMEA Parser includes the following features:
 * Provides accurate results even in the presence of noise or invalid data
 * Easy to use and integrate into your application
 
-## Supported function
+## Supported Functions
 
-List of supported functions can be found in:
+The NMEA Parser library provides a range of supported functions. The functions are organized into different groups based on their respective header files:
 
-* `core/nmea_data.h`
-* `core/nmea_converter.h`
-* `core/nmea_decoder.h`
+### nmea_utility.h
+
+This header file contains utility functions that are commonly used for NMEA data parsing and manipulation:
+
+- `bool NMEA_Parser_Process(nmea_data* data, char c)`: Function to parse NMEA sentences
+- `void NMEA_Parser_nmeadata_to_tm(const nmea_data* data, struct tm* timeinfo)`: Convert `nmea_data` to `struct tm`
+- `void NMEA_Parser_tm_to_nmeadata(const struct tm* timeinfo, nmea_data* data)`: Convert `struct tm` to `nmea_data`
+- `void NMEA_Parser_changeTimezone(nmea_data* data, int timezone_offset)`: Change timezone
+
+### Core Functions
+
+The core group includes the following header files:
+
+- `core/nmea_data.h`: Functions related to NMEA data handling and management.
+- `core/nmea_converter.h`: Functions for converting NMEA data to other formats.
+- `core/nmea_decoder.h`: Functions for decoding raw NMEA data into human-readable format.
+
+Please refer to the specific header files (`nmea_data.h`, `nmea_converter.h`, `nmea_decoder.h`) for a detailed list of functions available.
+
+It is recommended to start with the functions in `nmea_utility.h` as they provide common utility functions for NMEA data processing. If you require more specialized functionality, you can explore the functions in the core group header files.
 
 ## Limitations
 
