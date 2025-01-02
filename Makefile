@@ -13,7 +13,7 @@ TARGET := example
 build: $(BUILDDIR)/$(TARGET)
 
 $(BUILDDIR)/$(TARGET): $(OBJECTS) $(BUILDDIR)/$(TARGET).o
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ -lm
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p "$(dir $@)"
@@ -25,7 +25,7 @@ $(BUILDDIR)/parser/%.o: $(PARSERDIR)/%.c
 
 $(BUILDDIR)/$(TARGET).o: $(TARGET).c
 	@mkdir -p "$(dir $@)"
-	$(CC) $(CFLAGS) -c $< -o $@ 
+	$(CC) $(CFLAGS) -c $< -o $@
 
 run: $(BUILDDIR)/$(TARGET)
 	@echo ""
