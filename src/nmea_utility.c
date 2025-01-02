@@ -57,10 +57,10 @@ bool NMEA_Parser_Process(nmea_data* data, char c) {
 
     switch (c) {
         case ',':
-            parity ^= (uint8_t) c;
         case '*':
         case '\r':
         case '\n':
+            if (c == ',') parity ^= (uint8_t) c;
             Term[curTermOffset] = '\0';
             bool isValidSentence = endTermHandler(data);
             curTermNumber++;
